@@ -1,5 +1,8 @@
 package team.isaz.prerevolutionarytinder.server.service;
 
+import lombok.Getter;
+
+@Getter
 public class Response {
     boolean status;
     Object attach;
