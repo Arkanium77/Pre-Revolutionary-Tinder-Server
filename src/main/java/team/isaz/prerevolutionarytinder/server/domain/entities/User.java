@@ -25,6 +25,8 @@ public class User {
 
     private int role;
 
+    private boolean sex;
+
     private String profile_message;
 
 }
