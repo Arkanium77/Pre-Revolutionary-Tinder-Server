@@ -2,7 +2,6 @@ package team.isaz.prerevolutionarytinder.server.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import team.isaz.prerevolutionarytinder.server.domain.entities.User;
@@ -11,9 +10,11 @@ import team.isaz.prerevolutionarytinder.server.domain.repository.UserRepository;
 public class LoginService {
     Logger logger = LoggerFactory.getLogger(LoginService.class);
 
-    @Autowired
     UserRepository userRepository;
-    //TODO: Репозиторий не через Autowired
+
+    public LoginService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     public Response register(String username, String password, boolean sex) {
         User user;
