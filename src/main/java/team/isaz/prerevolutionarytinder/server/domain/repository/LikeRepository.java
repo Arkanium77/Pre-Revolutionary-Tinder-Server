@@ -1,7 +1,9 @@
 package team.isaz.prerevolutionarytinder.server.domain.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
 import team.isaz.prerevolutionarytinder.server.domain.entities.Like;
 
-public interface LikeRepository extends JpaRepository<Like, Long> {
+import java.util.UUID;
+
+public interface LikeRepository extends CrudRepository<Like, UUID> {
 }

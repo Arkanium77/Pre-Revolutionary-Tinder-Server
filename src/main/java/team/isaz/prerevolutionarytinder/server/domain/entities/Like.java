@@ -2,10 +2,7 @@ package team.isaz.prerevolutionarytinder.server.domain.entities;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
@@ -15,8 +12,11 @@ public class Like {
 
     @Id
     @GeneratedValue
-    private Long id;
+    private UUID id;
 
-    private UUID who;
-    private UUID whom;
+    @ManyToOne
+    private User who;
+
+    @ManyToOne
+    private User whom;
 }
