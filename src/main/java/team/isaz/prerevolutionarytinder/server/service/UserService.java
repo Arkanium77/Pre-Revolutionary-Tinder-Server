@@ -22,8 +22,8 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public Response register(String username, String password, boolean sex) {
-        var user = userRepository.findByUsername(username);
+    public Response register(String username, String password, Boolean sex) {
+        User user = userRepository.findByUsername(username);
         if (user != null) {
             return new Response(false, "Пользователь с таким именем уже существует");
         }
@@ -62,7 +62,7 @@ public class UserService {
         return userRepository.findById(id).orElse(null);
     }
 
-    private User createUser(String name, String password, boolean sex) {
+    private User createUser(String name, String password, Boolean sex) {
         name = name.trim();
         password = password.trim();
         User u = new User();
