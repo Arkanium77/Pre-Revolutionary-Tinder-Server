@@ -2,28 +2,19 @@ package team.isaz.prerevolutionarytinder.server.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 import team.isaz.prerevolutionarytinder.server.domain.Response;
 import team.isaz.prerevolutionarytinder.server.domain.entity.Like;
 import team.isaz.prerevolutionarytinder.server.domain.repository.LikeRepository;
-import team.isaz.prerevolutionarytinder.server.domain.repository.RoleRepository;
-import team.isaz.prerevolutionarytinder.server.domain.repository.UserRepository;
 
 import java.util.UUID;
 
-@Service
+
 public class LikeService {
     Logger logger = LoggerFactory.getLogger(UserService.class);
 
-    UserRepository userRepository;
-    RoleRepository roleRepository;
     LikeRepository likeRepository;
 
-    public LikeService(UserRepository userRepository,
-                       RoleRepository roleRepository,
-                       LikeRepository likeRepository) {
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
+    public LikeService(LikeRepository likeRepository) {
         this.likeRepository = likeRepository;
     }
 

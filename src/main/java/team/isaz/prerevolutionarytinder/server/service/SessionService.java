@@ -1,6 +1,5 @@
 package team.isaz.prerevolutionarytinder.server.service;
 
-import org.springframework.stereotype.Service;
 import team.isaz.prerevolutionarytinder.server.domain.Response;
 import team.isaz.prerevolutionarytinder.server.domain.Session;
 
@@ -8,9 +7,10 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
-@Service
+
 public class SessionService {
     final int MAX_MINUTE_SESSION_LIFETIME = 10;
     Map<UUID, Session> activeSessions;
@@ -50,5 +50,9 @@ public class SessionService {
     private boolean check(Session session) {
         var lifetime = ChronoUnit.MINUTES.between(session.getCreateTime(), LocalDateTime.now());
         return lifetime < MAX_MINUTE_SESSION_LIFETIME;
+    }
+
+    public Set<UUID> getActiveSessions() {
+        return activeSessions.keySet();
     }
 }

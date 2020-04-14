@@ -3,28 +3,21 @@ package team.isaz.prerevolutionarytinder.server.service;
 import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 import team.isaz.prerevolutionarytinder.server.domain.Response;
 import team.isaz.prerevolutionarytinder.server.domain.entity.User;
-import team.isaz.prerevolutionarytinder.server.domain.repository.LikeRepository;
-import team.isaz.prerevolutionarytinder.server.domain.repository.RoleRepository;
 import team.isaz.prerevolutionarytinder.server.domain.repository.UserRepository;
 
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
-@Service
+
 public class UserService {
     Logger logger = LoggerFactory.getLogger(UserService.class);
 
     UserRepository userRepository;
-    RoleRepository roleRepository;
-    LikeRepository likeRepository;
 
-    public UserService(UserRepository userRepository,
-                       RoleRepository roleRepository,
-                       LikeRepository likeRepository) {
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.likeRepository = likeRepository;
     }
 
     public Response register(String username, String password, boolean sex) {
@@ -50,6 +43,21 @@ public class UserService {
             return new Response(true, user.getId());
         }
         return new Response(false, "Неверный пароль");
+    }
+
+    public boolean isAdmin(UUID userId) {
+        AtomicReference<Boolean> response = new AtomicReference<>(false);
+        userRepository
+                .findById(userId)
+                .ifPresent(user ->
+                        response.set(
+                                user.getRoles() == 1
+                        ));
+        return response.get();
+    }
+
+    public User getUserById(UUID id) {
+        return userRepository.findById(id).orElse(null);
     }
 
     private User createUser(String name, String password, boolean sex) {
