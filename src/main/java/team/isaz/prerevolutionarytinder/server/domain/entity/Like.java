@@ -21,4 +21,7 @@ public class Like {
 
     @Column(name = "WHOM")
     private UUID whom;
+
+    @Column(name = "LIKED")
+    private boolean liked;
 }

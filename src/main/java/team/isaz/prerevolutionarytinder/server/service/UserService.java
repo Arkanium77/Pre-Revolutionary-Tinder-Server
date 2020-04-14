@@ -7,8 +7,10 @@ import team.isaz.prerevolutionarytinder.server.domain.Response;
 import team.isaz.prerevolutionarytinder.server.domain.entity.User;
 import team.isaz.prerevolutionarytinder.server.domain.repository.UserRepository;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 
 public class UserService {
@@ -100,6 +102,14 @@ public class UserService {
 
         builder.append("</table>");
         return new Response(true, builder.toString());
+    }
+
+    public List<UUID> getRelevantUsers(UUID id) {
+        var user = userRepository.findById(id).orElseThrow();
+        return userRepository.findAllBySex(!user.isSex())
+                .stream()
+                .map(User::getId)
+                .collect(Collectors.toList());
     }
 
 

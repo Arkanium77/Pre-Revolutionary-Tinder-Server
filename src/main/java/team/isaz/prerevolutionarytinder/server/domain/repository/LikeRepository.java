@@ -9,4 +9,7 @@ import java.util.UUID;
 @Repository
 public interface LikeRepository extends CrudRepository<Like, UUID> {
     boolean existsLikeByWhoAndWhom(UUID who, UUID whom);
+
+    boolean existsLikeByWhoAndWhomAndLiked(UUID who, UUID whom, boolean liked);
+
 }

@@ -22,11 +22,25 @@ public class LikeService {
         var like = new Like();
         like.setWho(who);
         like.setWhom(whom);
+        like.setLiked(true);
         likeRepository.save(like);
-        if (likeRepository.existsLikeByWhoAndWhom(whom, who)) {
+        if (likeRepository.existsLikeByWhoAndWhomAndLiked(whom, who, true)) {
             return new Response(true, "Вы любимы");
         }
         return new Response(true, "Любовь проявлена");
+    }
+
+    public Response dislike(UUID who, UUID whom) {
+        var like = new Like();
+        like.setWho(who);
+        like.setWhom(whom);
+        like.setLiked(false);
+        likeRepository.save(like);
+        return new Response(true, "Видно не судьба, видно нѣтъ любви.");
+    }
+
+    public boolean isNotExistRelation(UUID who, UUID whom) {
+        return !likeRepository.existsLikeByWhoAndWhom(who, whom);
     }
 
     public Response getTable() {
@@ -37,6 +51,7 @@ public class LikeService {
                 .append("<th>ID</th>")
                 .append("<th>WHO</th>")
                 .append("<th>WHOM</th>")
+                .append("<th>LIKED?</th>")
                 .append("</tr>");
 
         while (likes.hasNext()) {
@@ -45,6 +60,7 @@ public class LikeService {
             builder.append("<th>").append(like.getId()).append("</th>");
             builder.append("<th>").append(like.getWho()).append("</th>");
             builder.append("<th>").append(like.getWhom()).append("</th>");
+            builder.append("<th>").append(like.isLiked()).append("</th>");
             builder.append("</tr>");
         }
 
