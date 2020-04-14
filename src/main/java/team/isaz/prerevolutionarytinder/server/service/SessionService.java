@@ -34,12 +34,12 @@ public class SessionService {
         return id;
     }
 
-    public Response isSessionActive(UUID sessionId) {
+    public Response isSessionActive(UUID sessionId, LocalDateTime time) {
         if (!activeSessions.containsKey(sessionId)) {
             return new Response(false, "О нѣтъ! Такой сессии не существует.");
         }
         var session = activeSessions.get(sessionId);
-        var check = check(session);
+        var check = check(session, time);
         if (!check) {
             activeSessions.remove(sessionId);
             return new Response(check, "О нѣтъ! Время вышло! Войдите заново.");
@@ -47,8 +47,8 @@ public class SessionService {
         return new Response(check, session.getUserId());
     }
 
-    private boolean check(Session session) {
-        var lifetime = ChronoUnit.MINUTES.between(session.getCreateTime(), LocalDateTime.now());
+    private boolean check(Session session, LocalDateTime time) {
+        var lifetime = ChronoUnit.MINUTES.between(session.getCreateTime(), time);
         return lifetime < MAX_MINUTE_SESSION_LIFETIME;
     }
 

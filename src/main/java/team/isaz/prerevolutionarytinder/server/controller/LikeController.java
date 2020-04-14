@@ -11,6 +11,7 @@ import team.isaz.prerevolutionarytinder.server.service.CashOfRelated;
 import team.isaz.prerevolutionarytinder.server.service.LikeService;
 import team.isaz.prerevolutionarytinder.server.service.SessionService;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
 
@@ -35,7 +36,7 @@ public class LikeController {
         var whom = mappingUUID(params.get("whom"));
         if (!(sessionId.isStatus() && whom.isStatus()))
             return new ResponseEntity<>("Incorrect request body. <br> Expected: JSON, {\"sessionId\":uuid_x, \"whom\":uuid_y}.", HttpStatus.BAD_REQUEST);
-        var sessionResponse = sessionService.isSessionActive((UUID) sessionId.getAttach());
+        var sessionResponse = sessionService.isSessionActive((UUID) sessionId.getAttach(), LocalDateTime.now());
         if (!sessionResponse.isStatus())
             return new ResponseEntity<>(sessionResponse.getAttach().toString(), HttpStatus.BAD_REQUEST);
 
@@ -51,7 +52,7 @@ public class LikeController {
         var sessionId = mappingUUID(params.get("sessionId"));
         if (!sessionId.isStatus())
             return new ResponseEntity<>("Incorrect request body. <br> Expected: JSON, {\"sessionId\":uuid_x, \"whom\":uuid_y}.", HttpStatus.BAD_REQUEST);
-        var sessionResponse = sessionService.isSessionActive((UUID) sessionId.getAttach());
+        var sessionResponse = sessionService.isSessionActive((UUID) sessionId.getAttach(), LocalDateTime.now());
         if (!sessionResponse.isStatus())
             return new ResponseEntity<>(sessionResponse.getAttach().toString(), HttpStatus.BAD_REQUEST);
         var user = (UUID) sessionResponse.getAttach();

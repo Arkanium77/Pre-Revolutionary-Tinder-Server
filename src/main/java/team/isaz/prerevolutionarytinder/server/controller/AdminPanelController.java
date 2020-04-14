@@ -16,10 +16,8 @@ import team.isaz.prerevolutionarytinder.server.service.LikeService;
 import team.isaz.prerevolutionarytinder.server.service.SessionService;
 import team.isaz.prerevolutionarytinder.server.service.UserService;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -55,14 +53,13 @@ public class AdminPanelController {
                 HttpStatus.BAD_REQUEST);
 
         var keys = sessionService.getActiveSessions();
-        List<Object> loggedUsers = new ArrayList<>();
-        keys.forEach(uuid -> loggedUsers.add(sessionService.isSessionActive(uuid).getAttach()));
-        var values = loggedUsers.stream()
-                .filter(o -> o instanceof UUID)
-                .map(o -> (UUID) o)
-                .map(uuid -> userService.getUserById(uuid))
-                .map(User::getUsername)
-                .collect(Collectors.toList());
+        var values = getValues(keys);
+
+        var s = getStringRepresentationOfSessionList(keys, values);
+        return new ResponseEntity<>(s, HttpStatus.OK);
+    }
+
+    private String getStringRepresentationOfSessionList(Set<UUID> keys, List<String> values) {
         StringBuilder s = new StringBuilder();
         var keysIterator = keys.iterator();
         var valuesIterator = values.iterator();
@@ -72,7 +69,21 @@ public class AdminPanelController {
                     .append(valuesIterator.next())
                     .append('\n');
         }
-        return new ResponseEntity<>(s.toString(), HttpStatus.OK);
+        return s.toString();
+    }
+
+    private List<String> getValues(Set<UUID> keys) {
+        List<Object> loggedUsers = new ArrayList<>();
+        keys.forEach(uuid -> loggedUsers.add(
+                sessionService
+                        .isSessionActive(uuid, LocalDateTime.now())
+                        .getAttach()));
+        return loggedUsers.stream()
+                .filter(o -> o instanceof UUID)
+                .map(o -> (UUID) o)
+                .map(uuid -> userService.getUserById(uuid))
+                .map(User::getUsername)
+                .collect(Collectors.toList());
     }
 
     private ResponseEntity<String> getTableAsResponseEntity(Map<String, String> params, Response table) {
@@ -90,7 +101,7 @@ public class AdminPanelController {
         UUID sessionUUID;
         try {
             sessionUUID = UUID.fromString(sessionId);
-            var session = sessionService.isSessionActive(sessionUUID);
+            var session = sessionService.isSessionActive(sessionUUID, LocalDateTime.now());
             if (session.isStatus()) {
                 isAdmin = userService.isAdmin((UUID) session.getAttach());
             }

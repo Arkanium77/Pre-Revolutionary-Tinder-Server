@@ -18,5 +18,4 @@ public class Session {
         createTime = LocalDateTime.now();
         userId = id;
     }
-
 }
