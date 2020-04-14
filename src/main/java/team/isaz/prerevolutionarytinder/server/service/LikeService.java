@@ -23,6 +23,9 @@ public class LikeService {
         like.setWho(who);
         like.setWhom(whom);
         like.setLiked(true);
+        if (likeRepository.existsLikeByWhoAndWhom(who, whom)) {
+            return new Response(false, "Дубликатъ");
+        }
         likeRepository.save(like);
         if (likeRepository.existsLikeByWhoAndWhomAndLiked(whom, who, true)) {
             return new Response(true, "Вы любимы");
@@ -35,12 +38,15 @@ public class LikeService {
         like.setWho(who);
         like.setWhom(whom);
         like.setLiked(false);
+        if (likeRepository.existsLikeByWhoAndWhom(who, whom)) {
+            return new Response(false, "Дубликатъ");
+        }
         likeRepository.save(like);
         return new Response(true, "Видно не судьба, видно нѣтъ любви.");
     }
 
     public boolean isNotExistRelation(UUID who, UUID whom) {
-        return !likeRepository.existsLikeByWhoAndWhom(who, whom);
+        return !(likeRepository.existsLikeByWhoAndWhom(who, whom) || likeRepository.existsLikeByWhoAndWhom(whom, who));
     }
 
     public Response getTable() {
