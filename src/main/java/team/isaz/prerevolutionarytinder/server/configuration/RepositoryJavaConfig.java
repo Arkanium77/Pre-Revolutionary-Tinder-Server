@@ -7,15 +7,15 @@ import team.isaz.prerevolutionarytinder.server.domain.repository.RoleRepository;
 import team.isaz.prerevolutionarytinder.server.domain.repository.UserRepository;
 
 @Configuration
-public class RepositoryConfig {
+public class RepositoryJavaConfig {
     private final UserRepository userRepository;
     private final LikeRepository likeRepository;
     private final RoleRepository roleRepository;
 
     @Autowired
-    public RepositoryConfig(UserRepository userRepository,
-                            LikeRepository likeRepository,
-                            RoleRepository roleRepository) {
+    public RepositoryJavaConfig(UserRepository userRepository,
+                                LikeRepository likeRepository,
+                                RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.likeRepository = likeRepository;
         this.roleRepository = roleRepository;
@@ -33,3 +33,4 @@ public class RepositoryConfig {
         return this.roleRepository;
     }
 }
+

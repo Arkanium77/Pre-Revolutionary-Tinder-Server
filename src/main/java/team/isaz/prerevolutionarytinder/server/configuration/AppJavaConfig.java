@@ -5,24 +5,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 @Configuration
-@Import(RepositoryConfig.class)
+@Import(RepositoryJavaConfig.class)
 public class AppJavaConfig {
-    RepositoryConfig repositories;
+    RepositoryJavaConfig repositories;
 
     @Autowired
-    AppJavaConfig(RepositoryConfig repositories) {
+    AppJavaConfig(RepositoryJavaConfig repositories) {
         this.repositories = repositories;
     }
-
-    /*
-    @Bean
-    public UserService userService() {
-        return new UserService(
-                repositories.userRepository(),
-                repositories.roleRepository(),
-                repositories.likeRepository()
-        );
-    }*/
-
 
 }

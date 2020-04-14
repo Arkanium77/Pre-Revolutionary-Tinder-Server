@@ -1,29 +1,23 @@
 package team.isaz.prerevolutionarytinder.server.service;
 
+import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCrypt;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import team.isaz.prerevolutionarytinder.server.domain.entities.Role;
-import team.isaz.prerevolutionarytinder.server.domain.entities.User;
+import team.isaz.prerevolutionarytinder.server.domain.Response;
+import team.isaz.prerevolutionarytinder.server.domain.entity.User;
 import team.isaz.prerevolutionarytinder.server.domain.repository.LikeRepository;
 import team.isaz.prerevolutionarytinder.server.domain.repository.RoleRepository;
 import team.isaz.prerevolutionarytinder.server.domain.repository.UserRepository;
 
-import java.util.HashSet;
 
 @Service
-public class UserService implements UserDetailsService {
+public class UserService {
     Logger logger = LoggerFactory.getLogger(UserService.class);
 
     UserRepository userRepository;
     RoleRepository roleRepository;
     LikeRepository likeRepository;
-    BCryptPasswordEncoder encoder;
 
     public UserService(UserRepository userRepository,
                        RoleRepository roleRepository,
@@ -31,18 +25,6 @@ public class UserService implements UserDetailsService {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.likeRepository = likeRepository;
-        this.encoder = new BCryptPasswordEncoder();
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(s);
-
-        if (user == null) {
-            logger.info("User {} is not exist", s);
-        }
-
-        return user;
     }
 
     public Response register(String username, String password, boolean sex) {
@@ -75,12 +57,42 @@ public class UserService implements UserDetailsService {
         password = password.trim();
         User u = new User();
         u.setUsername(name);
-        password = encoder.encode(password);
+        password = BCrypt.hashpw(password, BCrypt.gensalt());
         u.setPassword(password);
-        u.setRoles(new HashSet<>());
-        u.getRoles().add(new Role());
+        u.setRoles(0);
         u.setSex(sex);
-        u.setProfile_message("Пока здѣсь пусто...");
+        u.setProfileMessage("Пока здѣсь пусто...");
         return u;
     }
+
+    public Response getTable() {
+        var users = userRepository.findAll().iterator();
+
+        var builder = new StringBuilder("<table>");
+        builder.append("<tr>")
+                .append("<th>ID</th>")
+                .append("<th>USERNAME</th>")
+                .append("<th>PWD</th>")
+                .append("<th>ROLES</th>")
+                .append("<th>SEX</th>")
+                .append("<th>PROFILE_MESSAGE</th>")
+                .append("</tr>");
+
+        while (users.hasNext()) {
+            var user = users.next();
+            builder.append("<tr>");
+            builder.append("<th>").append(user.getId()).append("</th>");
+            builder.append("<th>").append(user.getUsername()).append("</th>");
+            builder.append("<th>").append(user.getPassword()).append("</th>");
+            builder.append("<th>").append(user.getRoles()).append("</th>");
+            builder.append("<th>").append(user.isSex()).append("</th>");
+            builder.append("<th>").append(user.getProfileMessage()).append("</th>");
+            builder.append("</tr>");
+        }
+
+        builder.append("</table>");
+        return new Response(true, builder.toString());
+    }
+
+
 }

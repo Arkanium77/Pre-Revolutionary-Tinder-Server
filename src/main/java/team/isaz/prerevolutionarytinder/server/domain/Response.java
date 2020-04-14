@@ -1,4 +1,4 @@
-package team.isaz.prerevolutionarytinder.server.service;
+package team.isaz.prerevolutionarytinder.server.domain;
 
 import lombok.Getter;
 
