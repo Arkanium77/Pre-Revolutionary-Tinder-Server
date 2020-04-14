@@ -11,7 +11,7 @@ import java.util.UUID;
 public class FakeLikeRepository implements LikeRepository {
     List<Like> rep;
 
-    FakeLikeRepository() {
+    public FakeLikeRepository() {
         rep = new ArrayList<>();
     }
 

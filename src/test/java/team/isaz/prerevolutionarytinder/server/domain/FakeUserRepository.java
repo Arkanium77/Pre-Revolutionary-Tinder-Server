@@ -10,16 +10,27 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@SuppressWarnings("ConstantConditions")
+@SuppressWarnings({"ConstantConditions", "OptionalGetWithoutIsPresent"})
 public class FakeUserRepository implements UserRepository {
-    List<User> rep;
+    public List<User> rep;
 
-    FakeUserRepository() {
+    public FakeUserRepository() {
         rep = new ArrayList<>();
+    }
+
+    public static UUID getUUID(Integer i) {
+        String simpleId = "00000000000000000000000000000000";
+        simpleId = simpleId.substring(0, simpleId.length() - i.toString().length());
+        simpleId += i.toString();
+        simpleId = simpleId.replaceFirst(
+                "(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)",
+                "$1-$2-$3-$4-$5");
+        return UUID.fromString(simpleId);
     }
 
     public void fillRepository(int count) {
         User root = createUser("root", "1501", true, 0);
+        root.setRoles(1);
         rep.add(root);
         String girl = "Girl";
         String boy = "Boy";
@@ -27,7 +38,7 @@ public class FakeUserRepository implements UserRepository {
             if (i % 2 == 0) {
                 rep.add(createUser(girl + " " + i, girl, false, i));
             } else {
-                rep.add(createUser(boy + " " + i, boy, false, i));
+                rep.add(createUser(boy + " " + i, boy, true, i));
             }
         }
     }
@@ -36,8 +47,7 @@ public class FakeUserRepository implements UserRepository {
     public User findByUsername(String username) {
         return rep.stream()
                 .filter(user -> user.getUsername().equals(username))
-                .findAny()
-                .orElseGet(null);
+                .findAny().orElse(null);
     }
 
     @Override
@@ -130,16 +140,6 @@ public class FakeUserRepository implements UserRepository {
         u.setSex(sex);
         u.setProfileMessage("Пока здѣсь пусто...");
         return u;
-    }
-
-    public UUID getUUID(Integer i) {
-        String simpleId = "00000000000000000000000000000000";
-        simpleId = simpleId.substring(0, i.toString().length());
-        simpleId += i.toString();
-        simpleId = simpleId.replaceFirst(
-                "(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)",
-                "$1-$2-$3-$4-$5");
-        return UUID.fromString(simpleId);
     }
 
 }
