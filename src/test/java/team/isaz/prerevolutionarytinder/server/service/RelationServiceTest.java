@@ -6,21 +6,21 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import team.isaz.prerevolutionarytinder.server.domain.FakeLikeRepository;
+import team.isaz.prerevolutionarytinder.server.domain.FakeRelationRepository;
 import team.isaz.prerevolutionarytinder.server.domain.FakeUserRepository;
 import team.isaz.prerevolutionarytinder.server.domain.Response;
 
 import java.util.UUID;
 
 
-class LikeServiceTest {
-    LikeService likeService;
+class RelationServiceTest {
+    RelationService relationService;
     FakeUserRepository users;
 
     @BeforeEach
     void init() {
-        var rep = new FakeLikeRepository();
-        likeService = new LikeService(rep);
+        var rep = new FakeRelationRepository();
+        relationService = new RelationService(rep);
         users = new FakeUserRepository();
         users.fillRepository(5);
     }
@@ -34,7 +34,7 @@ class LikeServiceTest {
     })
     void simpleLike(UUID who, UUID whom) {
         var response = new Response(true, "Любовь проявлена");
-        Assertions.assertThat(likeService.like(who, whom)).isEqualTo(response);
+        Assertions.assertThat(relationService.like(who, whom)).isEqualTo(response);
     }
 
     @Test
@@ -47,11 +47,11 @@ class LikeServiceTest {
         var response2 = new Response(false, "Дубликатъ");
         var response3 = new Response(true, "Видно не судьба, видно нѣтъ любви.");
 
-        Assertions.assertThat(likeService.like(root, girl)).isEqualTo(response);
-        Assertions.assertThat(likeService.like(girl, root)).isEqualTo(response1);
-        Assertions.assertThat(likeService.like(root, girl)).isEqualTo(response2);
-        Assertions.assertThat(likeService.dislike(root, girl)).isEqualTo(response2);
-        Assertions.assertThat(likeService.dislike(boy, root)).isEqualTo(response3);
+        Assertions.assertThat(relationService.like(root, girl)).isEqualTo(response);
+        Assertions.assertThat(relationService.like(girl, root)).isEqualTo(response1);
+        Assertions.assertThat(relationService.like(root, girl)).isEqualTo(response2);
+        Assertions.assertThat(relationService.dislike(root, girl)).isEqualTo(response2);
+        Assertions.assertThat(relationService.dislike(boy, root)).isEqualTo(response3);
     }
 
 
@@ -60,11 +60,11 @@ class LikeServiceTest {
         UUID root = UUID.fromString("00000000-0000-0000-0000-000000000000");
         UUID boy = UUID.fromString("00000000-0000-0000-0000-000000000001");
         UUID girl = UUID.fromString("00000000-0000-0000-0000-000000000002");
-        likeService.like(root, girl);
-        likeService.like(girl, root);
-        likeService.like(root, boy);
-        Assertions.assertThat(likeService.isNotExistRelation(root, girl)).isFalse();
-        Assertions.assertThat(likeService.isNotExistRelation(boy, girl)).isTrue();
-        Assertions.assertThat(likeService.isNotExistRelation(boy, root)).isFalse();
+        relationService.like(root, girl);
+        relationService.like(girl, root);
+        relationService.like(root, boy);
+        Assertions.assertThat(relationService.isNotExistRelation(root, girl)).isFalse();
+        Assertions.assertThat(relationService.isNotExistRelation(boy, girl)).isTrue();
+        Assertions.assertThat(relationService.isNotExistRelation(boy, root)).isFalse();
     }
 }

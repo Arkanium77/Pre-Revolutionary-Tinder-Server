@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import team.isaz.prerevolutionarytinder.server.domain.Response;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.UUID;
 
 class SessionServiceTest {
@@ -23,8 +24,11 @@ class SessionServiceTest {
 
         Assertions.assertThat(r.isStatus()).isTrue();
 
-        Assertions.assertThat(
-                (UUID) sessionService.isSessionActive((UUID) r.getAttach(), LocalDateTime.now()).getAttach())
+        Assertions
+                .assertThat(
+                        (UUID) sessionService.getSessionActivity(
+                                (UUID) r.getAttach(), LocalDateTime.now())
+                                .getAttach())
                 .isEqualByComparingTo(uuid);
     }
 
@@ -33,12 +37,16 @@ class SessionServiceTest {
         UUID uuid = UUID.randomUUID();
         var r = sessionService.registerSession(uuid);
 
-        Assertions.assertThat(r.isStatus()).isTrue();
-
-        Assertions.assertThat(sessionService.isSessionActive((UUID) r.getAttach(), LocalDateTime.now()).isStatus())
+        Assertions
+                .assertThat(r.isStatus())
                 .isTrue();
 
-        Assertions.assertThat(sessionService.isSessionActive((UUID) r.getAttach(), LocalDateTime.MAX).isStatus())
+        Assertions
+                .assertThat(sessionService.getSessionActivity((UUID) r.getAttach(), LocalDateTime.now()).isStatus())
+                .isTrue();
+
+        Assertions
+                .assertThat(sessionService.getSessionActivity((UUID) r.getAttach(), LocalDateTime.MAX).isStatus())
                 .isFalse();
     }
 
@@ -47,13 +55,26 @@ class SessionServiceTest {
         sessionService.registerSession(UUID.randomUUID());
         sessionService.registerSession(UUID.randomUUID());
         sessionService.registerSession(UUID.randomUUID());
-        var r = sessionService.getActiveSessions();
+        var r = sessionService.getActiveSessions(LocalDateTime.now());
 
-        Assertions.assertThat(r.size())
+        Assertions
+                .assertThat(r.size())
                 .isEqualTo(sessionService.activeSessions.size());
 
-        Assertions.assertThat(r)
+        Assertions
+                .assertThat(r)
                 .isEqualTo(sessionService.activeSessions.keySet());
+
+        r = sessionService.getActiveSessions(LocalDateTime.MAX);
+        Assertions
+                .assertThat(r.size())
+                .isEqualTo(sessionService.activeSessions.size())
+                .isEqualTo(0);
+
+        Assertions
+                .assertThat(r)
+                .isEqualTo(sessionService.activeSessions.keySet())
+                .isEqualTo(new HashSet<>());
 
     }
 

@@ -6,7 +6,7 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import team.isaz.prerevolutionarytinder.server.domain.FakeLikeRepository;
+import team.isaz.prerevolutionarytinder.server.domain.FakeRelationRepository;
 import team.isaz.prerevolutionarytinder.server.domain.FakeUserRepository;
 import team.isaz.prerevolutionarytinder.server.domain.Response;
 
@@ -18,12 +18,12 @@ class CashOfRelatedTest {
 
     @BeforeAll
     static void init() {
-        FakeLikeRepository likes = new FakeLikeRepository();
+        FakeRelationRepository likes = new FakeRelationRepository();
         FakeUserRepository users = new FakeUserRepository();
         users.fillRepository(100);
         UserService userService = new UserService(users);
-        LikeService likeService = new LikeService(likes);
-        cash = new CashOfRelated(userService, likeService);
+        RelationService relationService = new RelationService(likes);
+        cash = new CashOfRelated(userService, relationService);
     }
 
     @Test
@@ -35,23 +35,23 @@ class CashOfRelatedTest {
     @RepeatedTest(50)
     void stackUsage() {
         UUID root = UUID.fromString("00000000-0000-0000-0000-000000000000");
-        int cashedSize = 10;
+        int cashedSize = cash.getCashSize();
         try {
             cashedSize = cash.cash.get(root).size();
-            logger.info("cash size is {}", cashedSize);
+            logger.debug("cash size is {}", cashedSize);
         } catch (NullPointerException e) {
             Assertions.assertThat(cash.cash.size()).isEqualTo(0);
-            logger.info("cash isn't created");
+            logger.debug("cash isn't created");
         }
         Response r = cash.getNext(root);
         if (cashedSize == 0) {
-            Assertions.assertThat(cash.cash.get(root).size()).isEqualTo(9);
+            Assertions.assertThat(cash.cash.get(root).size()).isEqualTo(cash.getCashSize() - 1);
         } else {
             Assertions.assertThat(cash.cash.get(root).size()).isEqualTo(cashedSize - 1);
         }
 
         Assertions.assertThat(r.isStatus()).isTrue();
-        cash.likeService.like(root, (UUID) r.getAttach());
+        cash.relationService.like(root, (UUID) r.getAttach());
     }
 
 

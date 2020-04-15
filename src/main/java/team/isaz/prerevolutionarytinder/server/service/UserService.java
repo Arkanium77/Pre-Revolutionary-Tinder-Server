@@ -13,6 +13,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 
+/**
+ * Сервис управления пользователями
+ */
 public class UserService {
     Logger logger = LoggerFactory.getLogger(UserService.class);
 
@@ -22,9 +25,19 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+    /**
+     * <b>Регистрация пользователя.</b>
+     *
+     * @param username имя пользователя (уникальное)
+     * @param password пароль
+     * @param sex      пол (true=male)
+     * @return {@link Response} о статусом true и UUID пользователя
+     * в случае успешного создания и false с поясняющей строкой в противном.
+     */
     public Response register(String username, String password, Boolean sex) {
         User user = userRepository.findByUsername(username);
         if (user != null) {
+            logger.debug("Пользователь с именем {} уже сущестует\nЕго данные:{}", username, user.toString());
             return new Response(false, "Пользователь с таким именем уже существует");
         }
 
@@ -35,9 +48,17 @@ public class UserService {
             logger.error(t.getMessage());
             return new Response(false, t.getMessage());
         }
+        logger.debug("Новый пользователь успешно зарегистрирован. -->{}", user.toString());
         return new Response(true, user.getId());
     }
 
+    /**
+     * <b>Вход</b>
+     *
+     * @param username имя пользователя
+     * @param password пароль
+     * @return {@link Response} со статусом true и uuid пользователя если пароль совпал и false иначе.
+     */
     public Response login(String username, String password) {
         var user = userRepository.findByUsername(username);
         if (user == null) return new Response(false, "Пользователя с таким именем не существует");
@@ -47,6 +68,13 @@ public class UserService {
         return new Response(false, "Неверный пароль");
     }
 
+    /**
+     * <b>Является ли администратором</b><br>
+     * Проверка, является ли пользователь с данным id администратором
+     *
+     * @param userId id пользователя.
+     * @return true, если является и false в остальных случаях.
+     */
     public boolean isAdmin(UUID userId) {
         AtomicReference<Boolean> response = new AtomicReference<>(false);
         userRepository
@@ -58,10 +86,24 @@ public class UserService {
         return response.get();
     }
 
+    /**
+     * <b>Получить пользователя по id</b>
+     *
+     * @param id UUID пользователя
+     * @return объект из репозитория с этим id или null
+     */
     public User getUserById(UUID id) {
         return userRepository.findById(id).orElse(null);
     }
 
+    /**
+     * <b>Генерация пользователя</b>
+     *
+     * @param name     имя
+     * @param password пароль
+     * @param sex      пол (true=male)
+     * @return объект класса User с установленными параметрами.
+     */
     private User createUser(String name, String password, Boolean sex) {
         name = name.trim();
         password = password.trim();
@@ -75,6 +117,25 @@ public class UserService {
         return u;
     }
 
+    /**
+     * <b>Получить ID пользователей противоположного пола</b>
+     *
+     * @param id пользователей для которого ищем релевантные id
+     * @return список uuid анкет
+     */
+    public List<UUID> getRelevantUsers(UUID id) {
+        var user = userRepository.findById(id).orElseThrow();
+        return userRepository.findAllBySex(!user.isSex())
+                .stream()
+                .map(User::getId)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Генерация html-таблицы представления UserRepository
+     *
+     * @return Response содержащий таблицу.
+     */
     public Response getTable() {
         var users = userRepository.findAll().iterator();
 
@@ -103,14 +164,5 @@ public class UserService {
         builder.append("</table>");
         return new Response(true, builder.toString());
     }
-
-    public List<UUID> getRelevantUsers(UUID id) {
-        var user = userRepository.findById(id).orElseThrow();
-        return userRepository.findAllBySex(!user.isSex())
-                .stream()
-                .map(User::getId)
-                .collect(Collectors.toList());
-    }
-
 
 }

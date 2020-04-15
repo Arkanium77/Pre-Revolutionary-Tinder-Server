@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import team.isaz.prerevolutionarytinder.server.domain.Response;
 import team.isaz.prerevolutionarytinder.server.domain.entity.User;
-import team.isaz.prerevolutionarytinder.server.service.LikeService;
+import team.isaz.prerevolutionarytinder.server.service.RelationService;
 import team.isaz.prerevolutionarytinder.server.service.SessionService;
 import team.isaz.prerevolutionarytinder.server.service.UserService;
 
@@ -26,37 +26,52 @@ public class AdminPanelController {
     Logger logger = LoggerFactory.getLogger(AdminPanelController.class);
 
     private UserService userService;
-    private LikeService likeService;
+    private RelationService relationService;
     private SessionService sessionService;
 
     @Autowired
-    public AdminPanelController(UserService userService, LikeService likeService, SessionService sessionService) {
+    public AdminPanelController(UserService userService, RelationService relationService, SessionService sessionService) {
         this.userService = userService;
-        this.likeService = likeService;
+        this.relationService = relationService;
         this.sessionService = sessionService;
     }
 
     @GetMapping("/user_table")
     public ResponseEntity<String> userTable(@RequestBody Map<String, String> params) {
+        logger.debug("Попытка получить данные о пользователях");
         return getTableAsResponseEntity(params, userService.getTable());
     }
 
-    @GetMapping("/like_table")
+    @GetMapping("/relation_table")
     public ResponseEntity<String> likeTable(@RequestBody Map<String, String> params) {
-        return getTableAsResponseEntity(params, likeService.getTable());
+        logger.debug("Попытка получить данные об отношениях");
+        return getTableAsResponseEntity(params, relationService.getTable());
     }
 
     @GetMapping("/sessions")
     public ResponseEntity<String> sessionList(@RequestBody Map<String, String> params) {
+        logger.debug("Попытка получить список сессий.");
         boolean isAdmin = checkPrivilege(params.get("sessionId"));
         if (!isAdmin) return new ResponseEntity<>("Сессия не существует или не преинадлежит администратору",
                 HttpStatus.BAD_REQUEST);
 
-        var keys = sessionService.getActiveSessions();
+        var keys = sessionService.getActiveSessions(LocalDateTime.now());
         var values = getValues(keys);
 
         var s = getStringRepresentationOfSessionList(keys, values);
+        logger.debug("Данные о сессиях получены:{}", s);
         return new ResponseEntity<>(s, HttpStatus.OK);
+    }
+
+    @GetMapping("/clear_sessions")
+    public ResponseEntity<String> clearSessions(@RequestBody Map<String, String> params) {
+        logger.debug("Попытка очистить список сессий.");
+        boolean isAdmin = checkPrivilege(params.get("sessionId"));
+        if (!isAdmin) return new ResponseEntity<>("Сессия не существует или не преинадлежит администратору",
+                HttpStatus.BAD_REQUEST);
+
+        sessionService.clearAllInactiveSession(LocalDateTime.now());
+        return new ResponseEntity<>("Сессии успешно очищены", HttpStatus.OK);
     }
 
     private String getStringRepresentationOfSessionList(Set<UUID> keys, List<String> values) {
@@ -76,7 +91,7 @@ public class AdminPanelController {
         List<Object> loggedUsers = new ArrayList<>();
         keys.forEach(uuid -> loggedUsers.add(
                 sessionService
-                        .isSessionActive(uuid, LocalDateTime.now())
+                        .getSessionActivity(uuid, LocalDateTime.now())
                         .getAttach()));
         return loggedUsers.stream()
                 .filter(o -> o instanceof UUID)
@@ -101,13 +116,14 @@ public class AdminPanelController {
         UUID sessionUUID;
         try {
             sessionUUID = UUID.fromString(sessionId);
-            var session = sessionService.isSessionActive(sessionUUID, LocalDateTime.now());
+            var session = sessionService.getSessionActivity(sessionUUID, LocalDateTime.now());
             if (session.isStatus()) {
                 isAdmin = userService.isAdmin((UUID) session.getAttach());
             }
         } catch (Exception e) {
-            logger.info("Can't get uuid from string\n\t{}", e.getMessage());
+            logger.debug("Can't get uuid from string\n\t{}", e.getMessage());
         }
+        logger.debug("Пользователь сессии {} {} является администратором", sessionId, isAdmin ? "" : "НЕ");
         return isAdmin;
     }
 

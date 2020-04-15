@@ -2,27 +2,27 @@ package team.isaz.prerevolutionarytinder.server.configuration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import team.isaz.prerevolutionarytinder.server.domain.repository.LikeRepository;
+import team.isaz.prerevolutionarytinder.server.domain.repository.RelationRepository;
 import team.isaz.prerevolutionarytinder.server.domain.repository.UserRepository;
 
 @Configuration
 public class RepositoryJavaConfig {
     private final UserRepository userRepository;
-    private final LikeRepository likeRepository;
+    private final RelationRepository relationRepository;
 
     @Autowired
     public RepositoryJavaConfig(UserRepository userRepository,
-                                LikeRepository likeRepository) {
+                                RelationRepository relationRepository) {
         this.userRepository = userRepository;
-        this.likeRepository = likeRepository;
+        this.relationRepository = relationRepository;
     }
 
     public UserRepository userRepository() {
         return this.userRepository;
     }
 
-    public LikeRepository likeRepository() {
-        return this.likeRepository;
+    public RelationRepository likeRepository() {
+        return this.relationRepository;
     }
 }
 

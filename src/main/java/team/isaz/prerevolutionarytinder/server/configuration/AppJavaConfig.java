@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import team.isaz.prerevolutionarytinder.server.service.CashOfRelated;
-import team.isaz.prerevolutionarytinder.server.service.LikeService;
+import team.isaz.prerevolutionarytinder.server.service.RelationService;
 import team.isaz.prerevolutionarytinder.server.service.SessionService;
 import team.isaz.prerevolutionarytinder.server.service.UserService;
 
@@ -30,8 +30,8 @@ public class AppJavaConfig {
     }
 
     @Bean
-    public LikeService likeService() {
-        return new LikeService(repositories.likeRepository());
+    public RelationService likeService() {
+        return new RelationService(repositories.likeRepository());
     }
 
     @Bean

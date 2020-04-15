@@ -7,9 +7,9 @@ import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
-@Table(name = "likes")
+@Table(name = "relations")
 @Data
-public class Like {
+public class Relation {
 
     @Id
     @GeneratedValue

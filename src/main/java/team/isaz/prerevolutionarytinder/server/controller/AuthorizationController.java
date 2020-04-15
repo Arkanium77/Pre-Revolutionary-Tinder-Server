@@ -1,5 +1,7 @@
 package team.isaz.prerevolutionarytinder.server.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import team.isaz.prerevolutionarytinder.server.domain.Response;
 import team.isaz.prerevolutionarytinder.server.service.SessionService;
 import team.isaz.prerevolutionarytinder.server.service.UserService;
+import team.isaz.prerevolutionarytinder.server.utils.MappingUtils;
 
 import java.util.Map;
 import java.util.UUID;
@@ -16,6 +19,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/authorization")
 public class AuthorizationController {
+    Logger logger = LoggerFactory.getLogger(AuthorizationController.class);
     private UserService userService;
     private SessionService sessionService;
 
@@ -28,9 +32,11 @@ public class AuthorizationController {
     public ResponseEntity<String> login(@RequestBody Map<String, String> params) {
         var username = params.get("username");
         var password = params.get("password");
+        logger.debug("Попытка авторизации\n\tusername: {}\n\tpassword: {}", username, password);
         if (username == null || password == null)
             return new ResponseEntity<>("Incorrect request body. <br> Expected: JSON, {\"username\":x, \"password\":y}.", HttpStatus.BAD_REQUEST);
         var response = userService.login(username, password);
+        logger.debug("Ответ авторизации: {}:\t{}", response.isStatus(), response.getAttach());
         return getSessionCreateResponseEntity(response);
     }
 
@@ -38,13 +44,15 @@ public class AuthorizationController {
     public ResponseEntity<String> register(@RequestBody Map<String, String> params) {
         var username = params.get("username");
         var password = params.get("password");
-        var sex = Boolean.parseBoolean(params.get("sex"));
-        if (username == null || password == null)
+        var sex = MappingUtils.booleanMapping(params.get("sex"));
+        logger.debug("Попытка регистрации\n\tusername: {}\n\tpassword: {}\n\tsex: {}", username, password, sex.getAttach());
+        if (username == null || password == null || !sex.isStatus())
             return new ResponseEntity<>(
                     "Incorrect request body. <br> Expected: JSON, {\"username\":x, \"password\":y, \"sex\":z}.",
                     HttpStatus.BAD_REQUEST);
 
-        var response = userService.register(username, password, sex);
+        var response = userService.register(username, password, (Boolean) sex.getAttach());
+        logger.debug("Ответ регистрации: {}:\t{}", response.isStatus(), response.getAttach());
         return getSessionCreateResponseEntity(response);
     }
 
