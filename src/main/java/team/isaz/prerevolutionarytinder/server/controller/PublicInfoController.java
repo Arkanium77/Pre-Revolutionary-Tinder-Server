@@ -4,11 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import team.isaz.prerevolutionarytinder.server.domain.Response;
+import team.isaz.prerevolutionarytinder.server.service.SessionService;
 import team.isaz.prerevolutionarytinder.server.service.UserService;
+import team.isaz.prerevolutionarytinder.server.utils.DataSendingUtils;
 import team.isaz.prerevolutionarytinder.server.utils.MappingUtils;
 
 import java.util.HashMap;
@@ -21,9 +21,11 @@ import java.util.UUID;
 public class PublicInfoController {
     Logger logger = LoggerFactory.getLogger(PublicInfoController.class);
     private UserService userService;
+    private SessionService sessionService;
 
-    public PublicInfoController(UserService userService) {
+    public PublicInfoController(UserService userService, SessionService sessionService) {
         this.userService = userService;
+        this.sessionService = sessionService;
     }
 
     @GetMapping("/profile_info")
@@ -42,6 +44,26 @@ public class PublicInfoController {
         return response.isStatus()
                 ? new ResponseEntity<>((String) response.getAttach(), HttpStatus.OK)
                 : new ResponseEntity<>((String) response.getAttach(), HttpStatus.BAD_REQUEST);
+    }
+
+    @GetMapping("/setup_profile_message")
+    public ResponseEntity<String> getNextRelated(@RequestBody Map<String, String> params) {
+        var sessionId = MappingUtils.mappingUUID(params.get("sessionId"));
+        logger.debug("Попытка сессии {} получить изменить сообщение профиля.", sessionId);
+
+        if (!sessionId.isStatus())
+            return new ResponseEntity<>("Incorrect request body. <br> " +
+                    "Expected: JSON, {\"sessionId\":uuid_x,\"profile_message\":string_y}.",
+                    HttpStatus.BAD_REQUEST);
+
+        Response sessionResponse = DataSendingUtils.getSessionActivityResponse(sessionId, sessionService);
+        if (!sessionResponse.isStatus())
+            return new ResponseEntity<>(sessionResponse.getAttach().toString(), HttpStatus.BAD_REQUEST);
+
+        var profileMessage = params.get("profile_message");
+        var user = (UUID) sessionResponse.getAttach();
+        var response = userService.changeProfileMessage(user, profileMessage);
+        return DataSendingUtils.getOperationResponseAsResponseStringEntity(response);
     }
 
 }

@@ -10,9 +10,9 @@ import team.isaz.prerevolutionarytinder.server.domain.Response;
 import team.isaz.prerevolutionarytinder.server.service.CashOfRelated;
 import team.isaz.prerevolutionarytinder.server.service.RelationService;
 import team.isaz.prerevolutionarytinder.server.service.SessionService;
+import team.isaz.prerevolutionarytinder.server.utils.DataSendingUtils;
 import team.isaz.prerevolutionarytinder.server.utils.MappingUtils;
 
-import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
 
@@ -44,7 +44,7 @@ public class RelationController {
                             "Expected: JSON, {\"sessionId\":uuid_x, \"whom\":uuid_y, \"isLike\":bool_z}.",
                     HttpStatus.BAD_REQUEST);
 
-        Response sessionResponse = getSessionActivityResponse(sessionId);
+        Response sessionResponse = DataSendingUtils.getSessionActivityResponse(sessionId, sessionService);
         if (!sessionResponse.isStatus())
             return new ResponseEntity<>(sessionResponse.getAttach().toString(), HttpStatus.BAD_REQUEST);
 
@@ -55,13 +55,8 @@ public class RelationController {
         } else {
             response = relationService.dislike(who, (UUID) whom.getAttach());
         }
-        return getOperationResponseAsResponseStringEntity(response);
+        return DataSendingUtils.getOperationResponseAsResponseStringEntity(response);
     }
-
-    private Response getSessionActivityResponse(Response sessionId) {
-        return sessionService.getSessionActivity((UUID) sessionId.getAttach(), LocalDateTime.now());
-    }
-
 
     @GetMapping("/getNext")
     public ResponseEntity<String> getNextRelated(@RequestBody Map<String, String> params) {
@@ -72,21 +67,13 @@ public class RelationController {
             return new ResponseEntity<>("Incorrect request body. <br> Expected: JSON, {\"sessionId\":uuid_x}.",
                     HttpStatus.BAD_REQUEST);
 
-        Response sessionResponse = getSessionActivityResponse(sessionId);
+        Response sessionResponse = DataSendingUtils.getSessionActivityResponse(sessionId, sessionService);
         if (!sessionResponse.isStatus())
             return new ResponseEntity<>(sessionResponse.getAttach().toString(), HttpStatus.BAD_REQUEST);
 
         var user = (UUID) sessionResponse.getAttach();
         var response = cashOfRelated.getNext(user);
-        return getOperationResponseAsResponseStringEntity(response);
-
-    }
-
-    private ResponseEntity<String> getOperationResponseAsResponseStringEntity(Response response) {
-        logger.debug("Response status: {}\t:::\tattach: {}", response.isStatus(), response.getAttach());
-        return response.isStatus()
-                ? new ResponseEntity<>(response.getAttach().toString(), HttpStatus.OK)
-                : new ResponseEntity<>(response.getAttach().toString(), HttpStatus.BAD_REQUEST);
+        return DataSendingUtils.getOperationResponseAsResponseStringEntity(response);
     }
 
 }

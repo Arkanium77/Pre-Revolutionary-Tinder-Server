@@ -201,4 +201,11 @@ public class UserService {
         return new Response(true, publicInfo);
     }
 
+    public Response changeProfileMessage(UUID user, String profileMessage) {
+        var u = userRepository.findById(user).orElse(null);
+        if (u == null) return new Response(false, "Нет пользователя с данным uuid");
+        u.setProfileMessage(profileMessage);
+        userRepository.save(u);
+        return new Response(true, "Сообщение профиля успешно установлено");
+    }
 }
