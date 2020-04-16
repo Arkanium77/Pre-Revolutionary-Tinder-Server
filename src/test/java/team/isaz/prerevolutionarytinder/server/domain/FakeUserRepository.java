@@ -1,6 +1,8 @@
 package team.isaz.prerevolutionarytinder.server.domain;
 
 import org.mindrot.jbcrypt.BCrypt;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import team.isaz.prerevolutionarytinder.server.domain.entity.User;
 import team.isaz.prerevolutionarytinder.server.domain.repository.UserRepository;
 
@@ -10,9 +12,9 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@SuppressWarnings({"ConstantConditions", "OptionalGetWithoutIsPresent"})
 public class FakeUserRepository implements UserRepository {
     public List<User> rep;
+    Logger logger = LoggerFactory.getLogger(FakeUserRepository.class);
 
     public FakeUserRepository() {
         rep = new ArrayList<>();
@@ -48,6 +50,17 @@ public class FakeUserRepository implements UserRepository {
         return rep.stream()
                 .filter(user -> user.getUsername().equals(username))
                 .findAny().orElse(null);
+    }
+
+    @Override
+    public User getNextUserByRowNumber(int rowNumber) {
+        User u = null;
+        try {
+            u = rep.get(rowNumber + 1);
+        } catch (Exception e) {
+            logger.debug("No row with number {}", rowNumber + 1);
+        }
+        return u;
     }
 
     @Override

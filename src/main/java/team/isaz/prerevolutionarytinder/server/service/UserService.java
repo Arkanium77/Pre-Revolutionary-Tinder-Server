@@ -7,7 +7,9 @@ import team.isaz.prerevolutionarytinder.server.domain.Response;
 import team.isaz.prerevolutionarytinder.server.domain.entity.User;
 import team.isaz.prerevolutionarytinder.server.domain.repository.UserRepository;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -26,7 +28,7 @@ public class UserService {
     }
 
     /**
-     * <b>Регистрация пользователя.</b>
+     * <b>Регистрация пользователя.</b><br>
      *
      * @param username имя пользователя (уникальное)
      * @param password пароль
@@ -53,7 +55,7 @@ public class UserService {
     }
 
     /**
-     * <b>Вход</b>
+     * <b>Вход</b><br>
      *
      * @param username имя пользователя
      * @param password пароль
@@ -87,7 +89,7 @@ public class UserService {
     }
 
     /**
-     * <b>Получить пользователя по id</b>
+     * <b>Получить пользователя по id</b><br>
      *
      * @param id UUID пользователя
      * @return объект из репозитория с этим id или null
@@ -97,7 +99,7 @@ public class UserService {
     }
 
     /**
-     * <b>Генерация пользователя</b>
+     * <b>Генерация пользователя</b><br>
      *
      * @param name     имя
      * @param password пароль
@@ -118,7 +120,7 @@ public class UserService {
     }
 
     /**
-     * <b>Получить ID пользователей противоположного пола</b>
+     * <b>Получить ID пользователей противоположного пола</b><br>
      *
      * @param id пользователей для которого ищем релевантные id
      * @return список uuid анкет
@@ -129,6 +131,21 @@ public class UserService {
                 .stream()
                 .map(User::getId)
                 .collect(Collectors.toList());
+    }
+
+
+    /**
+     * <b>Получить id следующего пользователя</b><br>
+     *
+     * @param rowNumber строка, СЛЕДУЮЩУЮ за которой нужно обработать.
+     * @return {@link Response} содержащий true и UUID в виде строки или
+     * false и пояснительную записку, в случае, если подходящей анкеты не найдено.
+     */
+    public Response getNextUserUUIDByNumber(int rowNumber) {
+        var u = userRepository.getNextUserByRowNumber(rowNumber);
+        return u == null
+                ? new Response(false, "Нет анкет")
+                : new Response(true, u.getId().toString());
     }
 
     /**
@@ -163,6 +180,24 @@ public class UserService {
 
         builder.append("</table>");
         return new Response(true, builder.toString());
+    }
+
+    /**
+     * <b>Получить общедоступную информацию о профиле</b>
+     *
+     * @param uuid идентификатор профиля
+     * @return {@link Response} содержащий false и пояснительную заметку, если пользователя с данным uuid не существует.
+     * В противном случае возвращает true и {@link Map}&lt{@link String},{@link String}&gt
+     * содержущую username,sex и profileMessage пользователя.
+     */
+    public Response getUserPublicInfo(UUID uuid) {
+        User user = userRepository.findById(uuid).orElse(null);
+        if (user == null) return new Response(false, "Нет пользователя с данным uuid");
+        Map<String, String> publicInfo = new HashMap<>();
+        publicInfo.put("username", user.getUsername());
+        publicInfo.put("sex", String.valueOf(user.isSex()));
+        publicInfo.put("profile_message", user.getProfileMessage());
+        return new Response(true, publicInfo);
     }
 
 }
