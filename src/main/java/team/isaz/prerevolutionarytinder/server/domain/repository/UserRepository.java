@@ -12,7 +12,7 @@ import java.util.UUID;
 public interface UserRepository extends CrudRepository<User, UUID> {
     User findByUsername(String username);
 
-    @Query(value = "select * from USERS ORDER BY ID OFFSET ? fetch next 1 row only",
+    @Query(value = "select * from USERS where ROLES!=1 order by ID offset ? fetch next 1 row only ",
             nativeQuery = true)
     User getNextUserByRowNumber(int rowNumber);
 

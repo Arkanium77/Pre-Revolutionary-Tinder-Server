@@ -129,6 +129,7 @@ public class UserService {
         var user = userRepository.findById(id).orElseThrow();
         return userRepository.findAllBySex(!user.isSex())
                 .stream()
+                .filter(u -> u.getRoles() != 1)
                 .map(User::getId)
                 .collect(Collectors.toList());
     }
