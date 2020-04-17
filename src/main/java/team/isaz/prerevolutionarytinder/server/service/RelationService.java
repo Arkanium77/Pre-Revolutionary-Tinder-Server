@@ -6,7 +6,9 @@ import team.isaz.prerevolutionarytinder.server.domain.Response;
 import team.isaz.prerevolutionarytinder.server.domain.entity.Relation;
 import team.isaz.prerevolutionarytinder.server.domain.repository.RelationRepository;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Сервис взаимодействия с RelationRepository
@@ -127,5 +129,14 @@ public class RelationService {
 
         builder.append("</table>");
         return new Response(true, builder.toString());
+    }
+
+    public List<UUID> getAllMatchesById(UUID user) {
+        return relationRepository.findAllByWhoAndLiked(user, true)
+                .stream()
+                .filter(relation ->
+                        relationRepository.existsLikeByWhoAndWhomAndLiked(relation.getWhom(), user, true))
+                .map(Relation::getWhom)
+                .collect(Collectors.toList());
     }
 }

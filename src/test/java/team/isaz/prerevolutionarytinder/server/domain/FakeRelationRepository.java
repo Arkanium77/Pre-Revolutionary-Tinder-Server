@@ -3,10 +3,8 @@ package team.isaz.prerevolutionarytinder.server.domain;
 import team.isaz.prerevolutionarytinder.server.domain.entity.Relation;
 import team.isaz.prerevolutionarytinder.server.domain.repository.RelationRepository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class FakeRelationRepository implements RelationRepository {
     List<Relation> rep;
@@ -30,6 +28,14 @@ public class FakeRelationRepository implements RelationRepository {
                         relation.getWho().equals(who)
                                 && relation.getWhom().equals(whom)
                                 && relation.isLiked() == liked);
+    }
+
+    @Override
+    public Set<Relation> findAllByWhoAndLiked(UUID who, boolean liked) {
+        return rep.stream()
+                .filter(relation -> relation.getWho().equals(who))
+                .filter(relation -> relation.isLiked() == liked)
+                .collect(Collectors.toSet());
     }
 
     @Override

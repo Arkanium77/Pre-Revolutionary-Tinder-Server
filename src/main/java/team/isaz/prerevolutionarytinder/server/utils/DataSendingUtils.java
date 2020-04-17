@@ -8,6 +8,7 @@ import team.isaz.prerevolutionarytinder.server.domain.Response;
 import team.isaz.prerevolutionarytinder.server.service.SessionService;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.UUID;
 
 public class DataSendingUtils {
@@ -23,4 +24,13 @@ public class DataSendingUtils {
                 ? new ResponseEntity<>(response.getAttach().toString(), HttpStatus.OK)
                 : new ResponseEntity<>(response.getAttach().toString(), HttpStatus.BAD_REQUEST);
     }
+
+    public static ResponseEntity<Map<String, String>> getOperationResponseAsResponseMapEntity(Response response) {
+        logger.debug("Response status: {}\t:::\tattach: {}", response.isStatus(), response.getAttach());
+        if (!response.isStatus()) return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+
+        return new ResponseEntity<>((Map<String, String>) response.getAttach(), HttpStatus.OK);
+    }
+
+
 }

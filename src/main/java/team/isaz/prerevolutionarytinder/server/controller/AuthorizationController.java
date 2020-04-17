@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,7 +28,7 @@ public class AuthorizationController {
         this.sessionService = sessionService;
     }
 
-    @GetMapping("/login")
+    @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody Map<String, String> params) {
         var username = params.get("username");
         var password = params.get("password");
@@ -40,7 +40,7 @@ public class AuthorizationController {
         return getSessionCreateResponseEntity(response);
     }
 
-    @GetMapping("/register")
+    @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody Map<String, String> params) {
         var username = params.get("username");
         var password = params.get("password");
@@ -58,7 +58,7 @@ public class AuthorizationController {
 
     private ResponseEntity<String> getSessionCreateResponseEntity(Response response) {
         if (!response.isStatus()) return new ResponseEntity<>(response.getAttach().toString(), HttpStatus.BAD_REQUEST);
-
+        logger.debug("Response: Status = {}; Attach: {}", response.isStatus(), response.getAttach());
         UUID userId = (UUID) response.getAttach();
         var sessionResponse = sessionService.registerSession(userId);
 

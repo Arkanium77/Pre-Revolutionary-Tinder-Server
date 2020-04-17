@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,24 +36,24 @@ public class AdminPanelController {
         this.sessionService = sessionService;
     }
 
-    @GetMapping("/user_table")
+    @PostMapping("/user_table")
     public ResponseEntity<String> userTable(@RequestBody Map<String, String> params) {
         logger.debug("Попытка получить данные о пользователях");
         return getTableAsResponseEntity(params, userService.getTable());
     }
 
-    @GetMapping("/relation_table")
+    @PostMapping("/relation_table")
     public ResponseEntity<String> likeTable(@RequestBody Map<String, String> params) {
         logger.debug("Попытка получить данные об отношениях");
         return getTableAsResponseEntity(params, relationService.getTable());
     }
 
-    @GetMapping("/sessions")
+    @PostMapping("/sessions")
     public ResponseEntity<String> sessionList(@RequestBody Map<String, String> params) {
         logger.debug("Попытка получить список сессий.");
-        boolean isAdmin = checkPrivilege(params.get("sessionId"));
+        boolean isAdmin = checkPrivilege(params.get("session_id"));
         if (!isAdmin) return new ResponseEntity<>("Сессия не существует или не преинадлежит администратору",
-                HttpStatus.BAD_REQUEST);
+                HttpStatus.UNAUTHORIZED);
 
         var keys = sessionService.getActiveSessions(LocalDateTime.now());
         var values = getValues(keys);
@@ -63,12 +63,12 @@ public class AdminPanelController {
         return new ResponseEntity<>(s, HttpStatus.OK);
     }
 
-    @GetMapping("/clear_sessions")
+    @PostMapping("/clear_sessions")
     public ResponseEntity<String> clearSessions(@RequestBody Map<String, String> params) {
         logger.debug("Попытка очистить список сессий.");
-        boolean isAdmin = checkPrivilege(params.get("sessionId"));
+        boolean isAdmin = checkPrivilege(params.get("session_id"));
         if (!isAdmin) return new ResponseEntity<>("Сессия не существует или не преинадлежит администратору",
-                HttpStatus.BAD_REQUEST);
+                HttpStatus.UNAUTHORIZED);
 
         sessionService.clearAllInactiveSession(LocalDateTime.now());
         return new ResponseEntity<>("Сессии успешно очищены", HttpStatus.OK);
@@ -102,7 +102,7 @@ public class AdminPanelController {
     }
 
     private ResponseEntity<String> getTableAsResponseEntity(Map<String, String> params, Response table) {
-        boolean isAdmin = checkPrivilege(params.get("sessionId"));
+        boolean isAdmin = checkPrivilege(params.get("session_id"));
         if (!isAdmin) return new ResponseEntity<>("Сессия не существует или не преинадлежит администратору",
                 HttpStatus.BAD_REQUEST);
 

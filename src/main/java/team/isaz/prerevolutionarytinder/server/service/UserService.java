@@ -7,10 +7,7 @@ import team.isaz.prerevolutionarytinder.server.domain.Response;
 import team.isaz.prerevolutionarytinder.server.domain.entity.User;
 import team.isaz.prerevolutionarytinder.server.domain.repository.UserRepository;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -207,5 +204,14 @@ public class UserService {
         u.setProfileMessage(profileMessage);
         userRepository.save(u);
         return new Response(true, "Сообщение профиля успешно установлено");
+    }
+
+    public List<String> getNamesById(List<UUID> uuidSet) {
+        return uuidSet.stream()
+                .map(uuid -> userRepository.findById(uuid))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(User::getUsername)
+                .collect(Collectors.toList());
     }
 }
