@@ -95,11 +95,12 @@ public class RelationService {
      *
      * @param firstUser  UUID пользователя
      * @param secondUser UUID другого пользователя
-     * @return true, если никаких отношений нет.
+     * @return true, если нет отношения между firstYser и secondUser и secondUser не ставил дизлайк firstUser
      */
     public boolean isNotExistRelation(UUID firstUser, UUID secondUser) {
-        return !(relationRepository.existsLikeByWhoAndWhom(firstUser, secondUser) || relationRepository.existsLikeByWhoAndWhom(secondUser, firstUser));
+        return !(relationRepository.existsLikeByWhoAndWhom(firstUser, secondUser) || relationRepository.existsLikeByWhoAndWhomAndLiked(secondUser, firstUser, false));
     }
+
 
     /**
      * Генерация HTML-табличного представления всего RelationRepository

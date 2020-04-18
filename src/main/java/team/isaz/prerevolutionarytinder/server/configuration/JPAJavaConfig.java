@@ -14,7 +14,8 @@ public class JPAJavaConfig {
     @Bean
     public DataSource dataSource() {
         var source = new DriverManagerDataSource(
-                "jdbc:h2:file:D:\\Java\\pre-revolutionary-tinder-server\\src\\main\\resources\\database\\tinder",
+                "jdbc:h2:file:C:\\Users\\Admin\\IdeaProjects\\Pre-Revolutionary-Tinder-Server\\src\\main\\resources\\database\\tinder",
+                //"jdbc:h2:file:D:\\Java\\pre-revolutionary-tinder-server\\src\\main\\resources\\database\\tinder",
                 "root",
                 "1501");
         source.setDriverClassName("org.h2.Driver");
