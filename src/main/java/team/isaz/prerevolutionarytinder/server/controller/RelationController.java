@@ -25,9 +25,9 @@ import java.util.UUID;
 public class RelationController {
     Logger logger = LoggerFactory.getLogger(RelationController.class);
     CashOfRelated cashOfRelated;
-    private RelationService relationService;
-    private SessionService sessionService;
-    private UserService userService;
+    private final RelationService relationService;
+    private final SessionService sessionService;
+    private final UserService userService;
 
     @Autowired
     public RelationController(RelationService relationService, SessionService sessionService,

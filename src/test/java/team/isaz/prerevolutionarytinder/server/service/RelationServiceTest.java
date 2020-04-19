@@ -65,6 +65,6 @@ class RelationServiceTest {
         relationService.like(root, boy);
         Assertions.assertThat(relationService.isNotExistRelation(root, girl)).isFalse();
         Assertions.assertThat(relationService.isNotExistRelation(boy, girl)).isTrue();
-        Assertions.assertThat(relationService.isNotExistRelation(boy, root)).isFalse();
+        Assertions.assertThat(relationService.isNotExistRelation(boy, root)).isTrue();
     }
 }

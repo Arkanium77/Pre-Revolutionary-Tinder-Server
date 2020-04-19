@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "database.connection_string",
+      "type": "java.lang.String",
+      "description": "Содержит строку подключения к H2 базе данных."
+    }
+  ]
+}

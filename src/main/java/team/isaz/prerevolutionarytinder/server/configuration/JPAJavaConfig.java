@@ -1,5 +1,6 @@
 package team.isaz.prerevolutionarytinder.server.configuration;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -11,13 +12,15 @@ import java.util.Properties;
 
 @Configuration
 public class JPAJavaConfig {
+    @Value("${database.connection_string}")
+    String connectionString;
+
     @Bean
     public DataSource dataSource() {
         var source = new DriverManagerDataSource(
-                "jdbc:h2:file:C:\\Users\\Admin\\IdeaProjects\\Pre-Revolutionary-Tinder-Server\\src\\main\\resources\\database\\tinder",
-                //"jdbc:h2:file:D:\\Java\\pre-revolutionary-tinder-server\\src\\main\\resources\\database\\tinder",
-                "root",
-                "1501");
+                connectionString,
+                System.getProperty("username"),
+                System.getProperty("password"));
         source.setDriverClassName("org.h2.Driver");
         return source;
     }

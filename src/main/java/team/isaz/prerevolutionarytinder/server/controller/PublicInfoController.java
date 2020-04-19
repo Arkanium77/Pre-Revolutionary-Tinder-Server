@@ -19,8 +19,8 @@ import java.util.UUID;
 @RequestMapping("/public_info")
 public class PublicInfoController {
     Logger logger = LoggerFactory.getLogger(PublicInfoController.class);
-    private UserService userService;
-    private SessionService sessionService;
+    private final UserService userService;
+    private final SessionService sessionService;
 
     public PublicInfoController(UserService userService, SessionService sessionService) {
         this.userService = userService;

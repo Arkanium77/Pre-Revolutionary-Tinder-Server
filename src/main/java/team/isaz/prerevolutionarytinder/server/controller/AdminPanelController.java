@@ -25,9 +25,9 @@ import java.util.stream.Collectors;
 public class AdminPanelController {
     Logger logger = LoggerFactory.getLogger(AdminPanelController.class);
 
-    private UserService userService;
-    private RelationService relationService;
-    private SessionService sessionService;
+    private final UserService userService;
+    private final RelationService relationService;
+    private final SessionService sessionService;
 
     @Autowired
     public AdminPanelController(UserService userService, RelationService relationService, SessionService sessionService) {

@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  * Хранит данные о подключениях и удаляет их по истечении времени подключения.
  */
 public class SessionService {
-    final int MAX_MINUTE_SESSION_LIFETIME = 10;
+    final int MAX_MINUTE_SESSION_LIFETIME = 1;
     Logger logger = LoggerFactory.getLogger(SessionService.class);
     Map<UUID, Session> activeSessions;
 

@@ -20,8 +20,8 @@ import java.util.UUID;
 @RequestMapping("/authorization")
 public class AuthorizationController {
     Logger logger = LoggerFactory.getLogger(AuthorizationController.class);
-    private UserService userService;
-    private SessionService sessionService;
+    private final UserService userService;
+    private final SessionService sessionService;
 
     public AuthorizationController(UserService userService, SessionService sessionService) {
         this.userService = userService;
