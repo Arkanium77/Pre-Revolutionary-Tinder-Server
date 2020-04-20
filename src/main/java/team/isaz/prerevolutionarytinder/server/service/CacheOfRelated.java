@@ -11,14 +11,14 @@ import java.util.stream.Collectors;
  * <b>Инструмент кеширования предлагаемых анкет.</b><br>
  * Необходим для уменьшения обращений к БД
  */
-public class CashOfRelated {
+public class CacheOfRelated {
     private final int CASH_SIZE = 10;
     final Map<UUID, Stack<UUID>> cash;
     final UserService userService;
     final RelationService relationService;
-    private final Logger logger = LoggerFactory.getLogger(CashOfRelated.class);
+    private final Logger logger = LoggerFactory.getLogger(CacheOfRelated.class);
 
-    public CashOfRelated(UserService userService, RelationService relationService) {
+    public CacheOfRelated(UserService userService, RelationService relationService) {
         cash = new HashMap<>();
         this.userService = userService;
         this.relationService = relationService;

@@ -12,9 +12,9 @@ import team.isaz.prerevolutionarytinder.server.domain.Response;
 
 import java.util.UUID;
 
-class CashOfRelatedTest {
-    static CashOfRelated cash;
-    Logger logger = LoggerFactory.getLogger(CashOfRelatedTest.class);
+class CacheOfRelatedTest {
+    static CacheOfRelated cash;
+    Logger logger = LoggerFactory.getLogger(CacheOfRelatedTest.class);
 
     @BeforeAll
     static void init() {
@@ -23,7 +23,7 @@ class CashOfRelatedTest {
         users.fillRepository(100);
         UserService userService = new UserService(users);
         RelationService relationService = new RelationService(likes);
-        cash = new CashOfRelated(userService, relationService);
+        cash = new CacheOfRelated(userService, relationService);
     }
 
     @Test

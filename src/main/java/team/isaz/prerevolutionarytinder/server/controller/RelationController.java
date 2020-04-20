@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import team.isaz.prerevolutionarytinder.server.domain.Response;
-import team.isaz.prerevolutionarytinder.server.service.CashOfRelated;
+import team.isaz.prerevolutionarytinder.server.service.CacheOfRelated;
 import team.isaz.prerevolutionarytinder.server.service.RelationService;
 import team.isaz.prerevolutionarytinder.server.service.SessionService;
 import team.isaz.prerevolutionarytinder.server.service.UserService;
@@ -24,17 +24,17 @@ import java.util.UUID;
 @RequestMapping("/relations")
 public class RelationController {
     private final Logger logger = LoggerFactory.getLogger(RelationController.class);
-    private final CashOfRelated cashOfRelated;
+    private final CacheOfRelated cacheOfRelated;
     private final RelationService relationService;
     private final SessionService sessionService;
     private final UserService userService;
 
     @Autowired
     public RelationController(RelationService relationService, SessionService sessionService,
-                              CashOfRelated cashOfRelated, UserService userService) {
+                              CacheOfRelated cacheOfRelated, UserService userService) {
         this.relationService = relationService;
         this.sessionService = sessionService;
-        this.cashOfRelated = cashOfRelated;
+        this.cacheOfRelated = cacheOfRelated;
         this.userService = userService;
     }
 
@@ -79,7 +79,7 @@ public class RelationController {
             return new ResponseEntity<>(sessionResponse.getAttach().toString(), HttpStatus.UNAUTHORIZED);
 
         var user = (UUID) sessionResponse.getAttach();
-        var response = cashOfRelated.getNext(user);
+        var response = cacheOfRelated.getNext(user);
         return DataSendingUtils.getOperationResponseAsResponseStringEntity(response);
     }
 
