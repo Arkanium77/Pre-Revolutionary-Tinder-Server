@@ -10,7 +10,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class MappingUtils {
-    static Logger logger = LoggerFactory.getLogger(MappingUtils.class);
+    private final static Logger logger = LoggerFactory.getLogger(MappingUtils.class);
 
     public static Response booleanMapping(String bool) {
         boolean mapped;

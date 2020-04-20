@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("admin")
 public class AdminPanelController {
-    Logger logger = LoggerFactory.getLogger(AdminPanelController.class);
+    private final Logger logger = LoggerFactory.getLogger(AdminPanelController.class);
 
     private final UserService userService;
     private final RelationService relationService;

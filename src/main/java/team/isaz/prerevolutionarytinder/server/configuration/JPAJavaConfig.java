@@ -13,7 +13,7 @@ import java.util.Properties;
 @Configuration
 public class JPAJavaConfig {
     @Value("${database.connection_string}")
-    String connectionString;
+    private String connectionString;
 
     @Bean
     public DataSource dataSource() {

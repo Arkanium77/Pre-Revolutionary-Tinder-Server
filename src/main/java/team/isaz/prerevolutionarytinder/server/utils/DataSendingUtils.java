@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class DataSendingUtils {
-    static Logger logger = LoggerFactory.getLogger(DataSendingUtils.class);
+    private final static Logger logger = LoggerFactory.getLogger(DataSendingUtils.class);
 
     public static Response getSessionActivityResponse(Response sessionId, SessionService sessionService) {
         return sessionService.getSessionActivity((UUID) sessionId.getAttach(), LocalDateTime.now());

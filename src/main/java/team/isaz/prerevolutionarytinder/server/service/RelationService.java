@@ -14,9 +14,9 @@ import java.util.stream.Collectors;
  * Сервис взаимодействия с RelationRepository
  */
 public class RelationService {
-    Logger logger = LoggerFactory.getLogger(RelationService.class);
+    private final Logger logger = LoggerFactory.getLogger(RelationService.class);
 
-    RelationRepository relationRepository;
+    private final RelationRepository relationRepository;
 
     public RelationService(RelationRepository relationRepository) {
         this.relationRepository = relationRepository;

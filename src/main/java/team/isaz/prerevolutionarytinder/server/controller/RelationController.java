@@ -23,8 +23,8 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/relations")
 public class RelationController {
-    Logger logger = LoggerFactory.getLogger(RelationController.class);
-    CashOfRelated cashOfRelated;
+    private final Logger logger = LoggerFactory.getLogger(RelationController.class);
+    private final CashOfRelated cashOfRelated;
     private final RelationService relationService;
     private final SessionService sessionService;
     private final UserService userService;

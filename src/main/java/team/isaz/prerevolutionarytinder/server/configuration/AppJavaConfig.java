@@ -12,7 +12,7 @@ import team.isaz.prerevolutionarytinder.server.service.UserService;
 @Configuration
 @Import(RepositoryJavaConfig.class)
 public class AppJavaConfig {
-    RepositoryJavaConfig repositories;
+    private final RepositoryJavaConfig repositories;
 
     @Autowired
     AppJavaConfig(RepositoryJavaConfig repositories) {

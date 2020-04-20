@@ -13,10 +13,10 @@ import java.util.stream.Collectors;
  */
 public class CashOfRelated {
     private final int CASH_SIZE = 10;
-    Logger logger = LoggerFactory.getLogger(CashOfRelated.class);
-    Map<UUID, Stack<UUID>> cash;
-    UserService userService;
-    RelationService relationService;
+    final Map<UUID, Stack<UUID>> cash;
+    final UserService userService;
+    final RelationService relationService;
+    private final Logger logger = LoggerFactory.getLogger(CashOfRelated.class);
 
     public CashOfRelated(UserService userService, RelationService relationService) {
         cash = new HashMap<>();

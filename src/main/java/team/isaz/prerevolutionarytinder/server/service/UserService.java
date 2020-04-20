@@ -16,9 +16,8 @@ import java.util.stream.Collectors;
  * Сервис управления пользователями
  */
 public class UserService {
-    Logger logger = LoggerFactory.getLogger(UserService.class);
-
-    UserRepository userRepository;
+    final UserRepository userRepository;
+    private final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
