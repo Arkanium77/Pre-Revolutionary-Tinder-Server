@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import team.isaz.prerevolutionarytinder.server.domain.FakeUserRepository;
 import team.isaz.prerevolutionarytinder.server.domain.entity.User;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
 
@@ -121,5 +122,33 @@ class UserServiceTest {
         Assertions
                 .assertThat(service.getUserPublicInfo(badId).isStatus())
                 .isFalse();
+    }
+
+    @Test
+    void changeProfileMessage() {
+        UUID rootId = UUID.fromString("00000000-0000-0000-0000-000000000000");
+        Assertions
+                .assertThat(service.changeProfileMessage(rootId, "!").isStatus())
+                .isTrue();
+        UUID notExistUUID = UUID.fromString("00000000-1111-0000-0000-000000000000");
+        Assertions
+                .assertThat(service.changeProfileMessage(notExistUUID, "!").isStatus())
+                .isFalse();
+    }
+
+    @Test
+    void getNamesById() {
+        var list = new ArrayList<UUID>();
+        for (int i = 0; i < 6; i++) {
+            list.add(UUID.fromString("00000000-0000-0000-0000-00000000000" + i));
+        }
+        Assertions
+                .assertThat(service.getNamesById(list).size())
+                .isEqualTo(6);
+
+        list.add(UUID.fromString("10000000-0000-0000-0000-000000000000"));
+        Assertions
+                .assertThat(service.getNamesById(list).size())
+                .isEqualTo(6);
     }
 }

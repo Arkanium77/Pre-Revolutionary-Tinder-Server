@@ -197,6 +197,13 @@ public class UserService {
         return new Response(true, publicInfo);
     }
 
+    /**
+     * <b>Изменить сообщение профиля</b>
+     *
+     * @param user           uuid пользователя.
+     * @param profileMessage новое сообщение профиля.
+     * @return {@link Response}, содержащий true, в случае успеха и false, если такого пользователя нет.
+     */
     public Response changeProfileMessage(UUID user, String profileMessage) {
         var u = userRepository.findById(user).orElse(null);
         if (u == null) return new Response(false, "Нет пользователя с данным uuid");
@@ -205,9 +212,15 @@ public class UserService {
         return new Response(true, "Сообщение профиля успешно установлено");
     }
 
-    public List<String> getNamesById(List<UUID> uuidSet) {
-        return uuidSet.stream()
-                .map(uuid -> userRepository.findById(uuid))
+    /**
+     * <b>Получить имена пользователей по их id</b>
+     *
+     * @param uuids список id пользователей
+     * @return список, содержащий имена, соответствующие id переданных пользователей
+     */
+    public List<String> getNamesById(List<UUID> uuids) {
+        return uuids.stream()
+                .map(userRepository::findById)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .map(User::getUsername)
