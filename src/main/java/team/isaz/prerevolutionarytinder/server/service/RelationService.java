@@ -132,6 +132,12 @@ public class RelationService {
         return new Response(true, builder.toString());
     }
 
+    /**
+     * <b>Получить все "пары" лайков.</b>
+     *
+     * @param user пользователь, для которого ищутся пары
+     * @return {@link List} с id пользователей с которыми у user сложились пары
+     */
     public List<UUID> getAllMatchesById(UUID user) {
         return relationRepository.findAllByWhoAndLiked(user, true)
                 .stream()
